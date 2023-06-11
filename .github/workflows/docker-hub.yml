@@ -15,14 +15,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Build the Docker image
-        uses: actions/checkout@v3
         run: docker build -t ${{ env.IMAGE_NAME }} --no-cache --force-rm .
 
   test:
     runs-on: ubuntu-latest
     steps:
       - name: Test the Docker image
-        uses: actions/checkout@v3
         run: docker run -d --name bitrix-app ${{ env.IMAGE_NAME }}
 
   push_to_registry:
