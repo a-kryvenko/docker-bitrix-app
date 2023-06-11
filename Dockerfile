@@ -1,4 +1,4 @@
-FROM php:8.1-fpm
+FROM php:7.4-fpm
 
 ENV UID=1000
 ENV GID=1000
@@ -17,6 +17,7 @@ RUN sed -i "s/user = www-data/user = 'www'/g" /usr/local/etc/php-fpm.d/www.conf 
   && echo "php_admin_flag[log_errors] = on" >> /usr/local/etc/php-fpm.d/www.conf
 
 # Installation of services and php extensions configuration
+
 RUN apt-get update -y \
     && apt-get autoremove -y \
     && apt-get install -y --no-install-recommends \
@@ -24,18 +25,13 @@ RUN apt-get update -y \
     libfreetype6-dev \
     libzip-dev \
     libpng-dev \
-    libonig-dev \
-    libbz2-dev \
-    libssl-dev \
-    libicu-dev \
     zip \
     unzip \
     curl \
     msmtp \
     && docker-php-ext-configure gd --with-jpeg --with-freetype \
-    && docker-php-ext-install gd exif mbstring mysqli pdo pdo_mysql \
-    && docker-php-ext-configure intl \
-    && docker-php-ext-install intl \
+    && docker-php-ext-install mysqli gd sockets zip opcache \
+    && docker-php-ext-enable mysqli gd sockets zip \
     && rm -rf /var/lib/apt/lists/*
 
 COPY php.ini /usr/local/etc/php/conf.d/php.ini
