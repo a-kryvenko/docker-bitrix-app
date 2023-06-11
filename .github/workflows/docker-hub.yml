@@ -11,27 +11,22 @@ env:
   IMAGE_NAME: "andriykryvenko/bitrix-app:${{ github.ref.name }}"
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     steps:
       - name: Build the Docker image
         run: docker build -t ${{ env.IMAGE_NAME }} --no-cache --force-rm .
 
-  test:
-    runs-on: ubuntu-latest
-    steps:
       - name: Test the Docker image
         run: docker run -d --name bitrix-app ${{ env.IMAGE_NAME }}
 
   push_to_registry:
+    needs: test
     name: Push Docker image to Docker Hub
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repo
         uses: actions/checkout@v3
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
@@ -39,8 +34,5 @@ jobs:
           username: andriykryvenko
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v4
-        with:
-          context: "{{defaultContext}}"
-          push: true
+      - name: Push image
+        run: docker push ${{ env.IMAGE_NAME }}
