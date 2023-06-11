@@ -45,5 +45,9 @@ services:
     ...
 ```
 
+Logfiles stored in
+ - /var/webserver/log/php/error.log - for php exceptions log
+ - /var/webserver/log/php/mail.log - for email sending log
+
 Full docker webserver for CMS Bitrix provided in **[docker-bitrix-webserver](https://github.com/a-kryvenko/docker-bitrix-webserver)** repository.
 
