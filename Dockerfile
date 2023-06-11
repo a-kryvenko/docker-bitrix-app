@@ -38,7 +38,7 @@ RUN apt-get update -y \
     && docker-php-ext-install intl \
     && rm -rf /var/lib/apt/lists/*
 
-COPY php.ini /usr/local/etc/php/conf.d/local.ini
+COPY php.ini /usr/local/etc/php/conf.d/php.ini
 
 # Configure connection to mail sender container
 COPY --chown=www:www .msmtprc /etc/msmtprc.default
