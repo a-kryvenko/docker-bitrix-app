@@ -33,7 +33,7 @@ RUN apt-get update -y \
     curl \
     msmtp \
     && docker-php-ext-configure gd --with-jpeg --with-freetype \
-    && docker-php-ext-install gd exif mbstring mysqli pdo pdo_mysql \
+    && docker-php-ext-install gd exif mbstring mysqli pdo pdo_mysql zip \
     && docker-php-ext-configure intl \
     && docker-php-ext-install intl \
     && rm -rf /var/lib/apt/lists/*
