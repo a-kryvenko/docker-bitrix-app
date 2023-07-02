@@ -18,7 +18,7 @@ Image expects at least 2 environment variables:
 Example of run image:
 
 ```shell
-docker run -d --rm --name --env SMTP_CONTAINER=smtp --env SMTP_EMAIL=example@mail.com bitrix-application andriykryvenko/bitrix-app:8.1
+docker run -d --rm --name bitrix-application --env SMTP_CONTAINER=smtp --env SMTP_EMAIL=example@mail.com andriykryvenko/bitrix-app:8.1
 ```
 
 Or via docker-compose:
