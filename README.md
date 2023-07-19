@@ -34,8 +34,8 @@ services:
     environment:
       SMTP_CONTAINER: "smtp"
       SMTP_EMAIL: "example@mail.com"
-    ports:
-      - "9000:9000"
+    expose:
+      - "9000"
     working_dir: /var/webserver/www
     volumes:
       - ./app:/var/webserver/www
