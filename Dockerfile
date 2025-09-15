@@ -24,6 +24,7 @@ RUN apt-get update -y \
     libfreetype6-dev \
     libzip-dev \
     libpng-dev \
+    libwebp-dev \
     libonig-dev \
     libbz2-dev \
     libssl-dev \
@@ -32,7 +33,7 @@ RUN apt-get update -y \
     unzip \
     curl \
     msmtp \
-    && docker-php-ext-configure gd --with-jpeg --with-freetype \
+    && docker-php-ext-configure gd --with-jpeg --with-freetype --with-webp \
     && docker-php-ext-install gd exif mbstring mysqli pdo pdo_mysql zip \
     && docker-php-ext-configure intl \
     && docker-php-ext-install intl \
