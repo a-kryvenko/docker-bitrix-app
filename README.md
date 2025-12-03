@@ -5,7 +5,7 @@
 Docker image of PHP-FPM for CMS Bitrix. Image include compiled php-fpm and smtp for
 sending emails through separate smtp container.
 
-**Latest** tag based on **PHP 8.2**. Tags **:8.2**, **:8.1**, **:8.0**, **:7.4** based on the corresponding php versions.
+**Latest** tag based on **PHP 8.3**. Tags **:8.3**, **:8.2**, **:8.1**, **:8.0**, **:7.4** based on the corresponding php versions.
 
 Image expects at least 2 environment variables:
 
@@ -17,7 +17,7 @@ Image expects at least 2 environment variables:
 Example of run image:
 
 ```shell
-docker run -d --rm --name bitrix-application --env SMTP_CONTAINER=smtp --env SMTP_EMAIL=example@mail.com andriykryvenko/bitrix-app:8.2
+docker run -d --rm --name bitrix-application --env SMTP_CONTAINER=smtp --env SMTP_EMAIL=example@mail.com andriykryvenko/bitrix-app:8.3
 ```
 
 Or via docker-compose:
@@ -28,7 +28,7 @@ services:
   app:
     container_name: wApplication
     restart: always
-    image: andriykryvenko/bitrix-app:8.2
+    image: andriykryvenko/bitrix-app:8.3
     tty: true
     environment:
       SMTP_CONTAINER: "smtp"
