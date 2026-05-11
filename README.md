@@ -5,7 +5,7 @@
 Docker image of PHP-FPM for CMS Bitrix. Image include compiled php-fpm and smtp for
 sending emails through separate smtp container.
 
-**Latest** tag based on **PHP 8.4**. Tags **:8.4**, **:8.3**, **:8.2**, **:8.1**, **:8.0**, **:7.4** based on the corresponding php versions.
+**Latest** tag based on **PHP 8.5**. Tags **:8.5**, **:8.4**, **:8.3**, **:8.2**, **:8.1**, **:8.0**, **:7.4**, **:7.3** based on the corresponding php versions.
 
 Image expects at least 2 environment variables:
 
