@@ -1,7 +1,6 @@
 # PHP-FPM for CMS Bitrix
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Stand With Ukraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/badges/StandWithUkraine.svg)](https://stand-with-ukraine.pp.ua)
 
 Docker image of PHP-FPM for CMS Bitrix. Image include compiled php-fpm and smtp for
 sending emails through separate smtp container.
