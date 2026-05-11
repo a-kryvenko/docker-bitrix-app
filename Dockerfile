@@ -37,6 +37,7 @@ RUN apt-get update -y \
 COPY php.ini /usr/local/etc/php/conf.d/php.ini
 
 # Configure connection to mail sender container
+COPY --chown=www:www .msmtprc /etc/msmtprc
 COPY .msmtprc /etc/msmtprc.template
 
 RUN chown www:www /etc/msmtprc.template
