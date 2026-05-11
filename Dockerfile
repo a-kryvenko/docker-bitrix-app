@@ -40,6 +40,7 @@ RUN apt-get update -y \
 COPY php.ini /usr/local/etc/php/conf.d/php.ini
 
 # Configure connection to mail sender container
+COPY --chown=www:www .msmtprc /etc/msmtprc
 COPY .msmtprc /etc/msmtprc.template
 
 RUN chown www:www /etc/msmtprc.template
@@ -47,8 +48,9 @@ RUN chown www:www /etc/msmtprc.template
 USER www
 
 # When runned - set msmtp configuration and up php-fpm
-CMD sh -c '\
-  cp /etc/msmtprc.template /etc/msmtprc && \
-  sed -i "s/#EMAIL#/$SMTP_EMAIL/" /etc/msmtprc && \
-  sed -i "s/#CONTAINER#/$SMTP_CONTAINER/" /etc/msmtprc && \
-  exec php-fpm -F'
+CMD cp /etc/msmtprc.template /tmp/msmtprc \
+    && sed -i "s/#EMAIL#/$SMTP_EMAIL/" /tmp/msmtprc \
+    && sed -i "s/#CONTAINER#/$SMTP_CONTAINER/" /tmp/msmtprc \
+    && cat /tmp/msmtprc >/etc/msmtprc \
+    && rm /tmp/msmtprc \
+    && php-fpm -y /usr/local/etc/php-fpm.conf -R
