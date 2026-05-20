@@ -22,6 +22,7 @@ RUN apt-get update -y \
     && apt-get install -y --no-install-recommends \
     libjpeg62-turbo-dev \
     libfreetype6-dev \
+    libwebp-dev \
     libzip-dev \
     libpng-dev \
     libmcrypt-dev \
@@ -29,7 +30,7 @@ RUN apt-get update -y \
     unzip \
     curl \
     msmtp \
-    && docker-php-ext-configure gd --with-jpeg-dir=/usr/include/ --with-freetype-dir=/usr/include/ \
+    && docker-php-ext-configure gd --with-jpeg-dir=/usr/include/ --with-freetype-dir=/usr/include/ --with-webp-dir=/usr/include/ \
     && docker-php-ext-install -j$(nproc) mysqli gd sockets zip opcache \
     && pecl install redis-5.3.7 mcrypt-1.0.2 \
     && docker-php-ext-enable redis mcrypt \
