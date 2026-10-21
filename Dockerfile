@@ -1,4 +1,4 @@
-FROM php:8.0-fpm
+FROM php:8.0.30-fpm
 
 ENV UID=1000
 ENV GID=1000
