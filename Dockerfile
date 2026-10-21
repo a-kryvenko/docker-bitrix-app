@@ -40,6 +40,8 @@ RUN apt-get update -y \
 
 COPY php.ini /usr/local/etc/php/conf.d/php.ini
 
+COPY --from=composer:2.10.3 /usr/bin/composer /usr/local/bin/composer
+
 # Configure connection to mail sender container
 COPY --chown=www:www .msmtprc /etc/msmtprc
 COPY .msmtprc /etc/msmtprc.template
