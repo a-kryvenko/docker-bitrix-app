@@ -38,7 +38,8 @@ RUN apt-get update -y \
     msmtp \
     && docker-php-ext-configure gd --with-jpeg-dir=/usr/include/ --with-freetype-dir=/usr/include/ --with-webp-dir=/usr/include/ \
     && docker-php-ext-install -j$(nproc) mysqli gd sockets zip opcache \
-    && pecl install redis-5.3.7 mcrypt-1.0.2 \
+    && pecl install redis-5.3.7 \
+    && pecl install https://pecl.php.net/get/mcrypt-1.0.2.tgz \
     && docker-php-ext-enable redis mcrypt \
     && rm -rf /var/lib/apt/lists/*
 
