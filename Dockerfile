@@ -17,6 +17,12 @@ RUN sed -i "s/^user = .*/user = www/" /usr/local/etc/php-fpm.d/www.conf \
  && echo "php_admin_flag[log_errors] = on" >> /usr/local/etc/php-fpm.d/www.conf
 
 # Installation of services and php extensions configuration
+# Use archived Debian repositories for this legacy PHP base image.
+RUN sed -i \
+    -e 's|deb.debian.org/debian|archive.debian.org/debian|g' \
+    -e 's|security.debian.org/debian-security|archive.debian.org/debian-security|g' \
+    /etc/apt/sources.list
+
 RUN apt-get update -y \
     && apt-get install -y --no-install-recommends \
     libjpeg62-turbo-dev \
