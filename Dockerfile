@@ -1,59 +1,72 @@
-FROM php:8.2.35-fpm
+FROM debian:bookworm-slim
 
 ENV UID=1000
 ENV GID=1000
 ENV SMTP_CONTAINER="mail"
 ENV SMTP_EMAIL="example@mail.com"
+# Keep the configuration override path used by the official PHP image.
+ENV PHP_INI_DIR=/usr/local/etc/php
+ENV PHP_INI_SCAN_DIR=:/usr/local/etc/php/conf.d
 
-USER root
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends ca-certificates curl \
+    && curl -fsSL https://packages.sury.org/debsuryorg-archive-keyring.deb -o /tmp/debsuryorg-archive-keyring.deb \
+    && dpkg -i /tmp/debsuryorg-archive-keyring.deb \
+    && rm /tmp/debsuryorg-archive-keyring.deb \
+    && echo "deb [signed-by=/usr/share/keyrings/debsuryorg-archive-keyring.gpg] https://packages.sury.org/php/ bookworm main" > /etc/apt/sources.list.d/php.list \
+    && apt-get update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        php8.2-cli \
+        php8.2-fpm \
+        php8.2-common \
+        php8.2-curl \
+        php8.2-gd \
+        php8.2-intl \
+        php8.2-mbstring \
+        php8.2-mcrypt \
+        php8.2-mysql \
+        php8.2-opcache \
+        php8.2-readline \
+        php8.2-redis \
+        php8.2-sqlite3 \
+        php8.2-xml \
+        php8.2-zip \
+        git \
+        zip \
+        unzip \
+        msmtp \
+    && rm -rf /var/lib/apt/lists/* \
+    && ln -s /usr/sbin/php-fpm8.2 /usr/local/bin/php-fpm \
+    # Use PHP's built-in defaults, as in the previous official PHP image. \
+    && rm /etc/php/8.2/cli/php.ini /etc/php/8.2/fpm/php.ini \
+    && mkdir -p /usr/local/etc/php/conf.d
 
-# Creating user and group
-RUN groupadd -g ${GID} www || true \
- && useradd -u ${UID} -g www -m -s /bin/bash www || true
-
-# Fix PHP-FPM user
-RUN sed -i "s/^user = .*/user = www/" /usr/local/etc/php-fpm.d/www.conf \
- && sed -i "s/^group = .*/group = www/" /usr/local/etc/php-fpm.d/www.conf \
- && echo "php_admin_flag[log_errors] = on" >> /usr/local/etc/php-fpm.d/www.conf
-
-# Installation of services and php extensions configuration
-RUN apt-get update -y \
-    && apt-get install -y --no-install-recommends \
-    libjpeg62-turbo-dev \
-    libfreetype6-dev \
-    libzip-dev \
-    libpng-dev \
-    libwebp-dev \
-    libonig-dev \
-    libbz2-dev \
-    libssl-dev \
-    libicu-dev \
-    zip \
-    unzip \
-    curl \
-    msmtp \
-    && docker-php-ext-configure gd --with-jpeg --with-freetype --with-webp \
-    && docker-php-ext-install -j$(nproc) gd exif mbstring mysqli pdo pdo_mysql zip intl \
-    && pecl install redis \
-    && docker-php-ext-enable redis \
-    && rm -rf /var/lib/apt/lists/*
-
-COPY php.ini /usr/local/etc/php/conf.d/php.ini
+# Fail the build if the repository does not provide the security fixes.
+RUN dpkg --compare-versions "$(dpkg-query -W -f='${Version}' php8.2-common)" ge '8.2.35-1'
 
 COPY --from=composer:2.10.3 /usr/bin/composer /usr/local/bin/composer
 
-# Configure connection to mail sender container
+RUN groupadd -g ${GID} www \
+    && useradd -u ${UID} -g www -m -s /bin/bash www \
+    && install -d -o www -g www /var/log/msmtp /var/webserver/log/php
+
+COPY php.ini /usr/local/etc/php/conf.d/php.ini
+
+COPY php-fpm.conf /usr/local/etc/php-fpm.conf
+
+# Configure connection to mail sender container.
 COPY --chown=www:www .msmtprc /etc/msmtprc
-COPY .msmtprc /etc/msmtprc.template
+COPY --chown=www:www .msmtprc /etc/msmtprc.template
 
-RUN chown www:www /etc/msmtprc.template
-
+WORKDIR /var/www/html
 USER www
 
-# When runned - set msmtp configuration and up php-fpm
+EXPOSE 9000
+STOPSIGNAL SIGQUIT
+
 CMD cp /etc/msmtprc.template /tmp/msmtprc \
     && sed -i "s/#EMAIL#/$SMTP_EMAIL/" /tmp/msmtprc \
     && sed -i "s/#CONTAINER#/$SMTP_CONTAINER/" /tmp/msmtprc \
     && cat /tmp/msmtprc >/etc/msmtprc \
     && rm /tmp/msmtprc \
-    && php-fpm -y /usr/local/etc/php-fpm.conf -R
+    && exec php-fpm -y /usr/local/etc/php-fpm.conf -R
