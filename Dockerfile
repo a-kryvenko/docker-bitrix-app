@@ -8,8 +8,9 @@ ENV SMTP_EMAIL="example@mail.com"
 USER root
 
 # Creating user and group
-RUN groupadd -g ${GID} www || true \
- && useradd -u ${UID} -g www -m -s /bin/bash www || true
+RUN groupadd -g ${GID} www \
+ && useradd -u ${UID} -g www -m -s /bin/bash www \
+ && install -d -o www -g www /var/log/msmtp /var/webserver/log/php
 
 # Fix PHP-FPM user
 RUN sed -i "s/^user = .*/user = www/" /usr/local/etc/php-fpm.d/www.conf \
@@ -56,4 +57,4 @@ CMD cp /etc/msmtprc.template /tmp/msmtprc \
     && sed -i "s/#CONTAINER#/$SMTP_CONTAINER/" /tmp/msmtprc \
     && cat /tmp/msmtprc >/etc/msmtprc \
     && rm /tmp/msmtprc \
-    && php-fpm -y /usr/local/etc/php-fpm.conf -R
+    && exec php-fpm -y /usr/local/etc/php-fpm.conf
